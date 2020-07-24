@@ -2,7 +2,7 @@ CREATE TABLE Usuario (
 id_usuario INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE, 
 nome_usuario TEXT(100) NOT NULL, 
 email_usuario TEXT(100) NOT NULL, 
-cpf_usuario INTEGER(11) NOT NULL, 
+cpf_usuario NUMERIC(11) NOT NULL, 
 data_nascimento DATE NOT NULL
 );
  
