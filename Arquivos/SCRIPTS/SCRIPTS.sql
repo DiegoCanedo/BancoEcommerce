@@ -2,9 +2,11 @@
 --EXCLUINDO INFORMACOES
 DELETE FROM Telefone WHERE id_usuario = 5
 
+SELECT * FROM Categoria c WHERE c.id_categoria = 5
+
 --ATUALIZANDO INFORMACOES
 UPDATE Categoria as c 
-	SET nome_categoria = 'Brinquedos Adulto', descricao_categoria = 'Brinquedos para publico adulto', categoria_habilitado = 0
+	SET nome_categoria = 'Brinquedos Adulto', descricao_categoria = 'Brinquedos para o publico adulto', categoria_habilitado = 0
 WHERE c.id_categoria = 5
 
 -- VERIFICA TODOS OS PRODUTOS EM ESTOQUE DO USUARIO

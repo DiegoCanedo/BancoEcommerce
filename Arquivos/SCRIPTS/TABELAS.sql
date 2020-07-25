@@ -1,6 +1,8 @@
 --SCRIPT CRIACAO DE TABELAS 
 --BANCO ECOMMERCE
 
+--BEGIN TRANSACTION;
+
 DROP TABLE IF EXISTS Usuario;
 CREATE TABLE Usuario ( 
 id_usuario INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE, 
@@ -8,25 +10,33 @@ nome_usuario TEXT(100) NOT NULL, email_usuario TEXT(100) NOT NULL,
 cpf_usuario INTEGER(11) NOT NULL, data_nascimento TEXT(10)
 );
 
+DROP TABLE IF EXISTS Estado;
 CREATE TABLE Estado (
 id_estado INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE NOT NULL,
-descricao_estado TEXT (20) NOT NULL,
+descricao_estado TEXT(20) NOT NULL,
+sigla_estado TEXT(2) NOT NULL
 );
 
+DROP TABLE IF EXISTS Cidade;
 CREATE TABLE Cidade (
     id_cidade INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE NOT NULL,
+    id_estado INTEGER NOT NULL,
     descricao_cidade TEXT(100) NOT NULL,
     FOREIGN KEY (id_estado) REFERENCES Estado(id_estado)
 );
 
+DROP TABLE IF EXISTS Bairro;
 CREATE TABLE Bairro (
     id_bairro INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE NOT NULL,
+    id_cidade INTEGER NOT NULL,
     descricao_bairro TEXT(100) NOT NULL,
     FOREIGN KEY (id_cidade) REFERENCES Cidade(id_cidade)
 );
 
+DROP TABLE IF EXISTS Endereco;
 CREATE TABLE Endereco (
     id_endereco INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE NOT NULL,
+    id_bairro INTEGER NOT NULL,
     descricao_endereco TEXT(100) NOT NULL,
     cep INTEGER (100) NOT NULL,
     FOREIGN KEY (id_bairro) REFERENCES Bairro(id_bairro)
@@ -65,12 +75,15 @@ id_produto INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE NOT NULL,
 id_categoria INTEGER NOT NULL,
 id_usuario INTEGER NOT NULL,
 nome_produto TEXT(150) NOT NULL,
+marca_produto TEXT(50),
 descricao_produto TEXT(200),
+url_imagem_produto TEXT,
 valor_unitario_produto INTEGER,
 FOREIGN KEY(id_categoria) REFERENCES Categoria(id_categoria),
 FOREIGN KEY(id_usuario) REFERENCES Usuario(id_usuario)
 );
 
+DROP TABLE IF EXISTS Estoque;
 CREATE TABLE Estoque (
 id_estoque INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE NOT NULL,
 id_produto INTEGER NOT NULL,
@@ -80,6 +93,7 @@ quantidade TEXT(100) NOT NULL,
 FOREIGN KEY(id_produto) REFERENCES Produto(id_produto)
 );
 
+DROP TABLE IF EXISTS Pedido;
 CREATE TABLE Pedido (
 id_pedido INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE NOT NULL,
 id_usuario INTEGER NOT NULL,
@@ -112,7 +126,7 @@ GROUP BY p.id_pedido;
 
 
 -- VIEW | vw_endereco source
-
+DROP VIEW IF EXISTS vw_endereco;
 CREATE VIEW vw_endereco 
 AS 
 SELECT 
@@ -128,22 +142,7 @@ INNER JOIN Estado e2 on e2.id_estado = c.id_estado
 WHERE eu.ultimo_endereco = 1;
 
 
--- TRIGGER | VALIDACAO DE PEDIDO_ITEM DE UM UNICO VENDEDOR
-DROP TRIGGER IF EXISTS tri_validate_pedido_por_vendedor;
-CREATE TRIGGER tri_validate_pedido_por_vendedor
-   BEFORE INSERT ON Pedido_Item
-BEGIN
-  SELECT
-  CASE
-	WHEN (SELECT count(DISTINCT p.id_usuario)
-    FROM Pedido_Item pi
-    INNER JOIN Produto p on pi.id_produto = p.id_produto 
-    WHERE pi.id_pedido = NEW.id_pedido) > 1	
-	THEN
-	RAISE (ABORT,'Vendas permitidas apenas de um mesmo vendedor')
-  END;
-END;
-
+--COMMIT;
 
 
  

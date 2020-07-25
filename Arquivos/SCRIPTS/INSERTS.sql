@@ -1,8 +1,8 @@
 --SCRIPT CRIACAO DE REGISTROS 
 --BANCO ECOMMERCE
 
-PRAGMA foreign_keys = off;
-BEGIN TRANSACTION;
+--PRAGMA foreign_keys = off;
+--BEGIN TRANSACTION;
 
 
 INSERT INTO Usuario ( nome_usuario, email_usuario, cpf_usuario, data_nascimento) VALUES 
@@ -14,19 +14,40 @@ INSERT INTO Usuario ( nome_usuario, email_usuario, cpf_usuario, data_nascimento)
 
 
 INSERT INTO Estado ( descricao_estado, sigla_estado ) VALUES
-('Rio de Janeiro', 'RJ'),
-('São Paulo', 'SP'),
-('Minas Gerais', 'MG'),
-('Paraná', 'PR'),
-('Santa Catarina', 'SC');
+ ('Alagoas','AL'),
+ ('Amazonas','AM'),
+ ('Amapá','AP'),
+ ('Bahia','BA'),
+ ('Ceará','CE'),
+ ('Distrito Federal','DF'),
+ ('Espírito Santo','ES'),
+ ('Goiás','GO'),
+ ('Maranhão','MA'),
+ ('Minas Gerais','MG'),
+ ('Mato Grosso do Sul','MS'),
+ ('Mato Grosso','MT'),
+ ('Pará','PA'),
+ ('Paraíba','PB'),
+ ('Pernambuco','PE'),
+ ('Piauí','PI'),
+ ('Paraná','PR'),
+ ('Rio de Janeiro','RJ'),
+ ('Rio Grande do Norte','RN'),
+ ('Rondônia','RO'),
+ ('Roraima','RR'),
+ ('Rio Grande do Sul','RS'),
+ ('Santa Catarina','SC'),
+ ('Sergipe','SE'),
+ ('São Paulo','SP'),
+ ('Tocantins','TO');
 
 
 INSERT INTO Cidade (id_estado, descricao_cidade) VALUES
-(1,'Petropolis'),
-(1,'Teresópolis'),
-(1,'Nova Friburgo'),
-(1,'Três Rios'),
-(1,'Resende');
+(18,'Petropolis'),
+(18,'Teresópolis'),
+(18,'Nova Friburgo'),
+(18,'Três Rios'),
+(18,'Resende');
 
 
 INSERT INTO Bairro (id_cidade, descricao_bairro) VALUES
