@@ -1,5 +1,3 @@
-
-
 --SCRIPT CRIACAO DE TABELAS 
 --BANCO ECOMMERCE
 
@@ -98,6 +96,53 @@ quantidade INTEGER NOT NULL,
 FOREIGN KEY(id_produto) REFERENCES Produto(id_produto),
 FOREIGN KEY(id_pedido) REFERENCES Pedido(id_pedido)
 );
+
+
+-- VIEW | vw_valor_total_pedido
+DROP VIEW IF EXISTS vw_valor_total_pedido;
+CREATE VIEW vw_valor_total_pedido
+AS 
+SELECT 
+	(SUM(prod.valor_unitario_produto) *  pi.quantidade) as total, 
+	p.id_pedido 
+FROM Produto prod 
+INNER JOIN Pedido_Item pi on pi.id_produto  = prod.id_produto
+INNER JOIN Pedido p on pi.id_pedido = p.id_pedido 
+GROUP BY p.id_pedido;
+
+
+-- VIEW | vw_endereco source
+
+CREATE VIEW vw_endereco 
+AS 
+SELECT 
+	u.id_usuario,
+	(e.descricao_endereco || ', ' || b.descricao_bairro || ', ' || c.descricao_cidade 
+	|| ', ' || e2.descricao_estado || ' - ' || e2.sigla_estado ) as Endereco_Vendedor
+FROM Usuario u 
+INNER JOIN Endereco_Usuario eu on eu.id_usuario = u.id_usuario 
+INNER JOIN Endereco e on e.id_endereco = eu.id_endereco 
+INNER JOIN Bairro b on b.id_bairro = e.id_bairro 
+INNER JOIN Cidade c on c.id_cidade = b.id_cidade 
+INNER JOIN Estado e2 on e2.id_estado = c.id_estado
+WHERE eu.ultimo_endereco = 1;
+
+
+-- TRIGGER | VALIDACAO DE PEDIDO_ITEM DE UM UNICO VENDEDOR
+DROP TRIGGER IF EXISTS tri_validate_pedido_por_vendedor;
+CREATE TRIGGER tri_validate_pedido_por_vendedor
+   BEFORE INSERT ON Pedido_Item
+BEGIN
+  SELECT
+  CASE
+	WHEN (SELECT count(DISTINCT p.id_usuario)
+    FROM Pedido_Item pi
+    INNER JOIN Produto p on pi.id_produto = p.id_produto 
+    WHERE pi.id_pedido = NEW.id_pedido) > 1	
+	THEN
+	RAISE (ABORT,'Vendas permitidas apenas de um mesmo vendedor')
+  END;
+END;
 
 
 
